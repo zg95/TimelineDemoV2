@@ -1,0 +1,24 @@
+{
+  "name": "chbim-test-v2",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^6.0.3",
+    "typescript": "~5.9.3",
+    "vite": "^7.2.4",
+    "vue": "^3.5.25",
+    "vue-tsc": "^3.1.8"
+  },
+  "dependencies": {
+    "chbim-time-axis-v2": "^0.0.9",
+    "dayjs": "^1.11.19",
+    "mars3d": "^3.10.10",
+    "vite-plugin-mars3d": "^4.2.2"
+  }
+}
