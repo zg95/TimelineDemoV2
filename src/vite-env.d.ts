@@ -6,3 +6,8 @@ declare module '*.vue' {
   export default component
 }
 
+interface Window {
+  map: any;
+  viewer: any;
+  Cesium: any;
+}

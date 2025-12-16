@@ -5,14 +5,11 @@ import { JulianDate } from "mars3d-cesium";
 import dayjs from "dayjs";
 import type { GanttTask, GanttGroup } from "chbim-time-axis-v2";
 
-// 将 Cesium 挂载到全局 window 对象 (Mars3D 内部也依赖 Cesium)
 // @ts-ignore
 window.Cesium = mars3d.Cesium;
 
 const viewerRef = ref<HTMLElement | null>(null);
-// 注意：CesiumGantt 可能需要原生 Cesium.Viewer 对象，
 // Mars3D 的 map 实例有一个 .viewer 属性指向原生 Viewer
-const mapInstance = ref<mars3d.Map | null>(null);
 const isViewerReady = ref(false);
 
 const getViewer = () => {
@@ -24,165 +21,124 @@ const getViewer = () => {
 const tasks = ref<(GanttTask | GanttGroup)[]>([
   {
     id: "1",
-    name: "分组 1",
-    type: "group",
-    // 分组的时间会自动计算，无需手动指定
-    startTime: "",
-    endTime: "",
-    // 设置时间限制以测试警告功能
-    limitStartTime: dayjs().subtract(1, "day").toISOString(), // 限制开始时间：昨天
-    limitEndTime: dayjs().add(6, "day").toISOString(), // 限制结束时间：6天后
-    children: [
-      {
-        id: "1-1",
-        name: "任务 1",
-        startTime: dayjs().subtract(2, "day").toISOString(), // 超出限制（早于限制开始时间）
-        endTime: dayjs().add(2, "day").toISOString(),
-      },
-      {
-        id: "1-2",
-        name: "任务 2",
-        startTime: dayjs().add(1, "day").toISOString(),
-        endTime: dayjs().add(3, "day").toISOString(),
-      },
-      {
-        id: "1-3",
-        name: "任务 3",
-        startTime: dayjs().add(2, "day").toISOString(),
-        endTime: dayjs().add(7, "day").toISOString(), // 超出限制（晚于限制结束时间）
-      },
-    ],
-  },
-  {
-    id: "6-0",
-    name: "任务 6",
-    startTime: dayjs().add(6, "day").toISOString(),
-    endTime: dayjs().add(8, "day").toISOString(),
-    type: "task",
-    allowInstant: true, // 仅该任务允许添加瞬时点
-    instants: [
-      {
-        id: "6-0-1",
-        time: dayjs().add(7, "day").toISOString(),
-        name: "检查点",
-      },
-    ],
-  },
-
-  {
-    id: "7",
-    name: "多块任务示例",
-    type: "block", // 块类型任务
+    name: "视点",
+    type: "block",
     startTime: "",
     endTime: "",
     allowInstant: true,
     blocks: [
       {
-        startTime: dayjs().add(12, "day").toISOString(),
-        endTime: dayjs().add(14, "day").toISOString(),
-        name: "阶段 1",
+        startTime: dayjs("2025-12-15 00:00:00").add(1, "day").toISOString(),
+        endTime: dayjs("2025-12-15 00:00:00").add(6, "day").toISOString(),
+        name: "阶段 漫游1",
         color: "#ff5555",
+        attr: { priority: "high", owner: "测试" },
+        class: "important-block",
       },
       {
-        startTime: dayjs().add(16, "day").toISOString(),
-        endTime: dayjs().add(19, "day").toISOString(),
-        name: "阶段 2",
+        startTime: dayjs("2025-12-15 00:00:00").add(16, "day").toISOString(),
+        endTime: dayjs("2025-12-15 00:00:00").add(19, "day").toISOString(),
+        name: "阶段 视点飞行1",
         color: "#5555ff",
       },
       {
-        startTime: dayjs().add(1, "day").toISOString(),
-        endTime: dayjs().add(13, "day").toISOString(),
-        name: "阶段 3",
+        startTime: dayjs("2025-12-15 00:00:00").add(7, "day").toISOString(),
+        endTime: dayjs("2025-12-15 00:00:00").add(12, "day").toISOString(),
+        name: "阶段 视点飞行2",
         color: "#e3ff55",
       },
     ],
-  },
-  {
-    id: "8",
-    name: "瞬时任务示例 (右键添加)",
-    type: "instant",
-    startTime: "",
-    endTime: "",
     instants: [
       {
-        id: "8-1",
-        time: dayjs().add(5, "day").toISOString(),
-        name: "里程碑 1",
-        color: "#ffffff",
-      },
-      {
-        id: "8-2",
-        time: dayjs().add(10, "day").toISOString(),
-        name: "里程碑 2",
-        color: "#ffffff",
+        id: "6-0-1",
+        time: dayjs("2025-12-15 00:00:00").add(14, "day").toISOString(),
+        name: "20%/30%",
+        attr: { verified: true },
+        class: "verified-instant",
       },
     ],
   },
   {
     id: "2",
-    name: "分组 2",
+    name: "施工工序",
     type: "group",
     startTime: "",
     endTime: "",
+    limitStartTime: dayjs("2025-12-15 00:00:00")
+      .subtract(1, "day")
+      .toISOString(),
+    limitEndTime: dayjs("2025-12-15 00:00:00").add(10, "day").toISOString(),
     children: [
       {
-        id: "2-1",
-        name: "长任务 A",
-        startTime: dayjs().subtract(10, "day").toISOString(),
-        endTime: dayjs().add(10, "day").toISOString(),
+        id: "1-subgroup",
+        name: "第一阶段",
+        type: "group",
+        startTime: "",
+        endTime: "",
+        limitStartTime: dayjs("2025-12-15 00:00:00")
+          .subtract(1, "day")
+          .toISOString(),
+        limitEndTime: dayjs("2025-12-15 00:00:00").add(10, "day").toISOString(),
+        children: [
+          {
+            id: "1-subgroup-task1",
+            name: "下构件施工",
+            startTime: dayjs("2025-12-15 00:00:00").add(1, "day").toISOString(),
+            endTime: dayjs("2025-12-15 00:00:00").add(3, "day").toISOString(),
+          },
+          {
+            id: "1-subgroup-task2",
+            name: "上构件施工",
+            startTime: dayjs("2025-12-15 00:00:00").add(2, "day").toISOString(),
+            endTime: dayjs("2025-12-15 00:00:00").add(5, "day").toISOString(),
+          },
+        ],
       },
       {
-        id: "2-2",
-        name: "长任务 B",
-        startTime: dayjs().subtract(5, "day").toISOString(),
-        endTime: dayjs().add(15, "day").toISOString(),
+        id: "1-2",
+        name: "第二阶段",
+        type: "group",
+        startTime: "",
+        endTime: "",
+        limitStartTime: dayjs("2025-12-15 00:00:00")
+          .subtract(2, "day")
+          .toISOString(),
+        limitEndTime: dayjs("2025-12-15 00:00:00").add(6, "day").toISOString(),
+        children: [
+          {
+            id: "1-subgroup-task3",
+            name: "XXXX施工",
+            startTime: dayjs("2025-12-15 00:00:00").add(2, "day").toISOString(),
+            endTime: dayjs("2025-12-15 00:00:00").add(4, "day").toISOString(),
+          },
+          {
+            id: "1-subgroup-task4",
+            name: "XXXX施工",
+            startTime: dayjs("2025-12-15 00:00:00").add(2, "day").toISOString(),
+            endTime: dayjs("2025-12-15 00:00:00").add(5, "day").toISOString(),
+          },
+        ],
+      },
+      {
+        id: "1-3",
+        name: "任务 3",
+        startTime: dayjs("2025-12-15 00:00:00").add(2, "day").toISOString(),
+        endTime: dayjs("2025-12-15 00:00:00").add(7, "day").toISOString(),
       },
     ],
   },
   {
-    id: "3",
-    name: "分组 3 (多任务测试滚动)",
+    id: "2",
+    name: "背景注释",
     type: "group",
     startTime: "",
     endTime: "",
-    children: Array.from({ length: 15 }).map((_, i) => ({
-      id: `3-${i}`,
-      name: `测试任务 ${i + 1}`,
-      startTime: dayjs().add(1, "month").add(i, "day").toISOString(),
-      endTime: dayjs()
-        .add(1, "month")
-        .add(i + 2, "day")
-        .toISOString(),
-    })),
-  },
-  {
-    id: "4",
-    name: "分组 4 (空分组)",
-    type: "group",
-    startTime: dayjs().add(3, "month").toISOString(), // 空分组也可以手动指定时间
-    endTime: dayjs().add(3, "month").add(5, "day").toISOString(),
-    children: [],
-  },
-  {
-    id: "5",
-    name: "分组 5 (限制测试)",
-    type: "group",
-    startTime: "",
-    endTime: "",
-    limitStartTime: dayjs().add(5, "day").toISOString(),
-    limitEndTime: dayjs().add(10, "day").toISOString(),
     children: [
       {
-        id: "5-1",
-        name: "任务 A",
-        startTime: dayjs().add(6, "day").toISOString(),
-        endTime: dayjs().add(8, "day").toISOString(),
-      },
-      {
-        id: "5-2",
-        name: "任务 B",
-        startTime: dayjs().add(9, "day").toISOString(),
-        endTime: dayjs().add(12, "day").toISOString(),
+        id: "3-1",
+        name: "倾斜摄影",
+        startTime: dayjs("2025-12-15 00:00:00").add(1, "day").toISOString(),
+        endTime: dayjs("2025-12-15 00:00:00").add(10, "day").toISOString(),
       },
     ],
   },
@@ -209,8 +165,8 @@ const handleAdd = (parentId: string) => {
             id: newId,
             name: `新任务 ${newId}`,
             type: "task",
-            startTime: dayjs().toISOString(),
-            endTime: dayjs().add(2, "day").toISOString(),
+            startTime: dayjs("2025-12-15 00:00:00").toISOString(),
+            endTime: dayjs("2025-12-15 00:00:00").add(2, "day").toISOString(),
           };
 
           if (!group.children) {
@@ -227,6 +183,42 @@ const handleAdd = (parentId: string) => {
     return false;
   };
   addTaskToGroup(tasks.value);
+};
+
+/**
+ * 处理添加瞬时任务
+ * @param {GanttTask} task - 目标任务
+ * @param {string | null | undefined} time - 时间
+ */
+const handleAddInstant = (task: GanttTask, time: string | null | undefined) => {
+  if (!time) {
+    console.warn("添加瞬时任务失败: 未获取到时间");
+    return;
+  }
+  console.log("添加瞬时任务", task.name, time);
+
+  const addInstant = (list: (GanttTask | GanttGroup)[]): boolean => {
+    for (const t of list) {
+      if (t.id === task.id) {
+        if (!t.instants) {
+          t.instants = [];
+        }
+        t.instants.push({
+          id: `${t.id}-inst-${Date.now()}`,
+          time: time,
+          name: "新瞬时点",
+          color: "#ffffff",
+        });
+        return true;
+      }
+      if (t.children) {
+        if (addInstant(t.children)) return true;
+      }
+    }
+    return false;
+  };
+
+  addInstant(tasks.value);
 };
 
 /**
@@ -373,8 +365,8 @@ const handleUpdateTask = (task: GanttTask) => {
 
 onMounted(() => {
   if (viewerRef.value) {
-    // 初始化 Mars3D Map
-    mapInstance.value = new mars3d.Map(viewerRef.value as any, {
+    // 初始化 Mars3D Map 时间默认停止 同时把开始时间设置到 2025年12月15日
+    window.map = new mars3d.Map("mars3d-container", {
       scene: {
         center: {
           lat: 30.054604,
@@ -383,20 +375,32 @@ onMounted(() => {
           heading: 0,
           pitch: -90,
         },
+        clock: {
+          currentTime: "2025-12-15 00:00:00",
+          shouldAnimate: false,
+        },
       },
       control: {
-        // 保持和之前 Cesium 类似的简洁配置
         baseLayerPicker: false,
         timeline: true,
         animation: true,
         infoBox: false,
         selectionIndicator: false,
       },
+      basemaps: [
+        {
+          name: "天地图影像",
+          icon: "https://data.mars3d.cn/img/thumbnail/basemap/tdt_img.png",
+          type: "tdt",
+          layer: "img_d",
+          show: true,
+        },
+      ],
     });
 
     // 获取内部 Cesium Viewer 实例供甘特图组件使用
     // @ts-ignore
-    window.viewer = mapInstance.value.viewer;
+    window.viewer = window.map.viewer;
 
     // 配置 Cesium 动画/时间轴以显示本地时间 (例如中国时间)
     // @ts-ignore
@@ -430,13 +434,15 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
-  if (mapInstance.value) {
-    mapInstance.value.destroy();
-    mapInstance.value = null;
+  if (window.map) {
+    window.map.destroy();
+    window.map = null;
     // @ts-ignore
     window.viewer = undefined;
   }
 });
+
+//
 </script>
 
 <template>
@@ -511,8 +517,24 @@ onUnmounted(() => {
           </div>
         </template>
 
+        <template #barContent="{ bar }">
+          <span v-if="bar.width > 50" class="barLabel">
+            {{ bar.name }}
+          </span>
+        </template>
+
+        <template #blockContent="{ block }">
+          <span v-if="block.width > 50" class="barLabel">
+            {{ block.name }} / 自定义
+          </span>
+        </template>
+
+        <template #instantContent="{ instant }">
+          <span class="instantLabel">{{ instant.name }}</span>
+        </template>
+
         <!-- 右侧时间轴任务块/行右键菜单插槽 -->
-        <template #barContextMenu="{ task, block, instant, close }">
+        <template #barContextMenu="{ task, block, instant, close, time }">
           <template v-if="task">
             <!-- 任务/Block 多项 -->
             <template v-if="!instant">
@@ -525,7 +547,29 @@ onUnmounted(() => {
                 "
               >
                 {{ block ? `块: ${block.name}` : `任务: ${task.name}` }}
+                <div
+                  v-if="block?.attr || task.attr"
+                  style="color: #888; margin-top: 4px"
+                >
+                  属性:
+                  {{
+                    block
+                      ? JSON.stringify(block.attr)
+                      : JSON.stringify(task.attr)
+                  }}
+                </div>
               </div>
+              <!-- 添加瞬时任务 -->
+              <div
+                class="menu-item"
+                @click="
+                  handleAddInstant(task, time);
+                  close();
+                "
+              >
+                添加瞬时任务
+              </div>
+
               <div
                 class="menu-item"
                 @click="
@@ -546,7 +590,7 @@ onUnmounted(() => {
               </div>
             </template>
 
-            <!-- 单项 (瞬时点) -->
+            <!-- 单项 -->
             <template v-else>
               <div
                 style="
@@ -557,6 +601,9 @@ onUnmounted(() => {
                 "
               >
                 {{ `瞬时点: ${instant.name || "未命名"}` }}
+                <div v-if="instant.attr" style="color: #888; margin-top: 4px">
+                  属性: {{ JSON.stringify(instant.attr) }}
+                </div>
               </div>
               <div
                 class="menu-item"
@@ -574,6 +621,26 @@ onUnmounted(() => {
     </div>
   </div>
 </template>
+
+<style scoped>
+.barLabel {
+  font-size: 11px;
+  color: #000;
+  white-space: nowrap;
+  padding: 0 10px;
+}
+.important-block {
+  border: 2px solid yellow;
+}
+:deep(.instantTaskPoint.verified-instant) {
+  border-radius: 0;
+  background: transparent !important;
+  box-shadow: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+</style>
 
 <style>
 body {
