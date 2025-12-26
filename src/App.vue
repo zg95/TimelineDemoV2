@@ -3,7 +3,11 @@ import { ref, onMounted, onUnmounted } from "vue";
 import * as mars3d from "mars3d";
 import { JulianDate } from "mars3d-cesium";
 import dayjs from "dayjs";
-import type { GanttTask, GanttGroup } from "chbim-time-axis-v2";
+import {
+  ViewportRoam,
+  type GanttTask,
+  type GanttGroup,
+} from "chbim-time-axis-v2";
 
 // @ts-ignore
 window.Cesium = mars3d.Cesium;
@@ -21,157 +25,196 @@ const getViewer = () => {
 const tasks = ref<(GanttTask | GanttGroup)[]>([
   {
     id: "1",
-    name: "视点",
+    name: "相机控制",
     type: "block",
     startTime: "",
     endTime: "",
     allowInstant: true,
     blocks: [
       {
-        startTime: dayjs("2025-12-15 00:00:00").add(1, "day").toISOString(),
-        endTime: dayjs("2025-12-15 00:00:00").add(6, "day").toISOString(),
-        name: "阶段 漫游1",
+        startTime: dayjs("2025-12-15 00:00:00").add(4, "day").toISOString(),
+        endTime: dayjs("2025-12-15 00:00:00").add(12, "day").toISOString(),
+        name: "视口漫游1",
         color: "#ff5555",
-        attr: { priority: "high", owner: "测试" },
+        attr: {
+          type: "viewport-roam",
+          roamData: [
+            {
+              alt: 402.6,
+              heading: 54.6,
+              lat: 22.551104,
+              lng: 114.144985,
+              pitch: -12.2,
+              time: "2025-11-30T16:00:00.000Z",
+            },
+            {
+              alt: 334.4,
+              heading: 82.5,
+              lat: 22.561695,
+              lng: 114.151774,
+              pitch: -9.4,
+              time: "2025-12-08T00:00:00.000Z",
+            },
+            {
+              alt: 373.9,
+              heading: 102.4,
+              lat: 22.566208,
+              lng: 114.161951,
+              pitch: -11.2,
+              time: "2025-12-15T08:00:00.000Z",
+            },
+            {
+              alt: 375.1,
+              heading: 93.8,
+              lat: 22.559993,
+              lng: 114.169893,
+              pitch: -11.5,
+              time: "2025-12-22T16:00:00.000Z",
+            },
+          ],
+        },
         class: "important-block",
       },
       {
-        startTime: dayjs("2025-12-15 00:00:00").add(16, "day").toISOString(),
-        endTime: dayjs("2025-12-15 00:00:00").add(19, "day").toISOString(),
-        name: "阶段 视点飞行1",
+        startTime: dayjs("2025-12-15 00:00:00").add(22, "day").toISOString(),
+        endTime: dayjs("2025-12-15 00:00:00").add(27, "day").toISOString(),
+        name: "视口漫游2",
         color: "#5555ff",
       },
       {
-        startTime: dayjs("2025-12-15 00:00:00").add(7, "day").toISOString(),
-        endTime: dayjs("2025-12-15 00:00:00").add(12, "day").toISOString(),
-        name: "阶段 视点飞行2",
+        startTime: dayjs("2025-12-15 00:00:00").add(14, "day").toISOString(),
+        endTime: dayjs("2025-12-15 00:00:00").add(21, "day").toISOString(),
+        name: "无数据",
         color: "#e3ff55",
+        attr: {
+          // 视口漫游
+          type: "viewport-roam",
+          roamData: [
+            {
+              alt: 976.3,
+              heading: 156.2,
+              lat: 22.56967,
+              lng: 114.142361,
+              pitch: -24.7,
+            },
+            {
+              alt: 388.4,
+              heading: 50,
+              lat: 22.546051,
+              lng: 114.143493,
+              pitch: -24.8,
+            },
+            {
+              alt: 638.7,
+              heading: 306.2,
+              lat: 22.540672,
+              lng: 114.165232,
+              pitch: -27.8,
+            },
+            {
+              alt: 616.4,
+              heading: 286.6,
+              lat: 22.551244,
+              lng: 114.169335,
+              pitch: -26.9,
+            },
+            {
+              alt: 468.3,
+              heading: 218.3,
+              lat: 22.571266,
+              lng: 114.168322,
+              pitch: -21.4,
+            },
+          ],
+        },
       },
     ],
     instants: [
       {
-        id: "6-0-1",
-        time: dayjs("2025-12-15 00:00:00").add(14, "day").toISOString(),
-        name: "20%/30%",
+        id: "1-1-1",
+        time: dayjs("2025-12-16 00:00:00").toISOString(),
+        attr: {
+          // 视口飞行
+          type: "viewport-flight",
+          alt: 468.3,
+          heading: 218.3,
+          lat: 22.571266,
+          lng: 114.168322,
+          pitch: -21.4,
+        },
+      },
+      {
+        id: "1-1-2",
+        time: dayjs("2025-12-15 00:00:00").add(30, "day").toISOString(),
+        name: "自由的心",
         attr: { verified: true },
         class: "verified-instant",
       },
     ],
   },
-  {
-    id: "2",
-    name: "施工工序",
-    type: "group",
-    startTime: "",
-    endTime: "",
-    limitStartTime: dayjs("2025-12-15 00:00:00")
-      .subtract(1, "day")
-      .toISOString(),
-    limitEndTime: dayjs("2025-12-15 00:00:00").add(10, "day").toISOString(),
-    children: [
-      {
-        id: "1-subgroup",
-        name: "第一阶段",
-        type: "group",
-        startTime: "",
-        endTime: "",
-        limitStartTime: dayjs("2025-12-15 00:00:00")
-          .subtract(1, "day")
-          .toISOString(),
-        limitEndTime: dayjs("2025-12-15 00:00:00").add(10, "day").toISOString(),
-        children: [
-          {
-            id: "1-subgroup-task1",
-            name: "下构件施工",
-            type: "block",
-            startTime: "",
-            endTime: "",
-            allowInstant: true,
-            blocks: [
-              {
-                startTime: dayjs("2025-12-15 00:00:00")
-                  .add(1, "day")
-                  .toISOString(),
-                endTime: dayjs("2025-12-15 00:00:00")
-                  .add(6, "day")
-                  .toISOString(),
-                name: "阶段 漫游1",
-                color: "#ff5555",
-                attr: { priority: "high", owner: "测试" },
-                class: "important-block",
-              },
-              {
-                startTime: dayjs("2025-12-15 00:00:00")
-                  .add(16, "day")
-                  .toISOString(),
-                endTime: dayjs("2025-12-15 00:00:00")
-                  .add(19, "day")
-                  .toISOString(),
-                name: "阶段 视点飞行1",
-                color: "#5555ff",
-              },
-              {
-                startTime: dayjs("2025-12-15 00:00:00")
-                  .add(7, "day")
-                  .toISOString(),
-                endTime: dayjs("2025-12-15 00:00:00")
-                  .add(12, "day")
-                  .toISOString(),
-                name: "阶段 视点飞行2",
-                color: "#e3ff55",
-              },
-            ],
-            instants: [
-              {
-                id: "6-0-1",
-                time: dayjs("2025-12-15 00:00:00").add(14, "day").toISOString(),
-                name: "20%/30%",
-                attr: { verified: true },
-                class: "verified-instant",
-              },
-            ],
-          },
-          {
-            id: "1-subgroup-task2",
-            name: "上构件施工",
-            startTime: dayjs("2025-12-15 00:00:00").add(2, "day").toISOString(),
-            endTime: dayjs("2025-12-15 00:00:00").add(5, "day").toISOString(),
-          },
-        ],
-      },
-      {
-        id: "1-2",
-        name: "第二阶段",
-        type: "group",
-        startTime: "",
-        endTime: "",
-        limitStartTime: dayjs("2025-12-15 00:00:00")
-          .subtract(2, "day")
-          .toISOString(),
-        limitEndTime: dayjs("2025-12-15 00:00:00").add(6, "day").toISOString(),
-        children: [
-          {
-            id: "1-subgroup-task3",
-            name: "XXXX施工",
-            startTime: dayjs("2025-12-15 00:00:00").add(2, "day").toISOString(),
-            endTime: dayjs("2025-12-15 00:00:00").add(4, "day").toISOString(),
-          },
-          {
-            id: "1-subgroup-task4",
-            name: "XXXX施工",
-            startTime: dayjs("2025-12-15 00:00:00").add(2, "day").toISOString(),
-            endTime: dayjs("2025-12-15 00:00:00").add(5, "day").toISOString(),
-          },
-        ],
-      },
-      {
-        id: "1-3",
-        name: "任务 3",
-        startTime: dayjs("2025-12-15 00:00:00").add(2, "day").toISOString(),
-        endTime: dayjs("2025-12-15 00:00:00").add(7, "day").toISOString(),
-      },
-    ],
-  },
+  // {
+  //   id: "2",
+  //   name: "施工工序",
+  //   type: "group",
+  //   startTime: "",
+  //   endTime: "",
+  //   limitStartTime: dayjs("2025-12-15 00:00:00")
+  //     .subtract(1, "day")
+  //     .toISOString(),
+  //   limitEndTime: dayjs("2025-12-15 00:00:00").add(10, "day").toISOString(),
+  //   children: [
+  //     {
+  //       id: "1-subgroup",
+  //       name: "第一阶段",
+  //       type: "group",
+  //       startTime: "",
+  //       endTime: "",
+  //       limitStartTime: dayjs("2025-12-15 00:00:00")
+  //         .subtract(1, "day")
+  //         .toISOString(),
+  //       limitEndTime: dayjs("2025-12-15 00:00:00").add(10, "day").toISOString(),
+  //       children: [
+  //         {
+  //           id: "1-subgroup-task2",
+  //           name: "上构件施工",
+  //           startTime: dayjs("2025-12-15 00:00:00").add(2, "day").toISOString(),
+  //           endTime: dayjs("2025-12-15 00:00:00").add(5, "day").toISOString(),
+  //         },
+  //       ],
+  //     },
+  //     {
+  //       id: "1-2",
+  //       name: "第二阶段",
+  //       type: "group",
+  //       startTime: "",
+  //       endTime: "",
+  //       limitStartTime: dayjs("2025-12-15 00:00:00")
+  //         .subtract(2, "day")
+  //         .toISOString(),
+  //       limitEndTime: dayjs("2025-12-15 00:00:00").add(6, "day").toISOString(),
+  //       children: [
+  //         {
+  //           id: "1-subgroup-task3",
+  //           name: "XXXX施工",
+  //           startTime: dayjs("2025-12-15 00:00:00").add(2, "day").toISOString(),
+  //           endTime: dayjs("2025-12-15 00:00:00").add(4, "day").toISOString(),
+  //         },
+  //         {
+  //           id: "1-subgroup-task4",
+  //           name: "XXXX施工",
+  //           startTime: dayjs("2025-12-15 00:00:00").add(2, "day").toISOString(),
+  //           endTime: dayjs("2025-12-15 00:00:00").add(5, "day").toISOString(),
+  //         },
+  //       ],
+  //     },
+  //     {
+  //       id: "1-3",
+  //       name: "任务 3",
+  //       startTime: dayjs("2025-12-15 00:00:00").add(2, "day").toISOString(),
+  //       endTime: dayjs("2025-12-15 00:00:00").add(7, "day").toISOString(),
+  //     },
+  //   ],
+  // },
   {
     id: "2",
     name: "背景注释",
@@ -188,325 +231,6 @@ const tasks = ref<(GanttTask | GanttGroup)[]>([
     ],
   },
 ]);
-
-// const tasks = ref<(GanttTask | GanttGroup)[]>([
-//   {
-//     id: "753099772575813",
-//     projectId: "737253120151621",
-//     planId: "753099772551237",
-//     name: "施工计划",
-//     type: "group",
-//     level: 1,
-//     startTime: "",
-//     endTime: "",
-//     icon: null,
-//     parentId: undefined,
-//     isSectionLine: false,
-//     importType: null,
-//     roadUrl: null,
-//     roadPlanID: null,
-//     jsonUrl: null,
-//     isDisplay: true,
-//     isLoad: true,
-//     sort: 1,
-//     modelPartsId: null,
-//     viewAttribute: null,
-//     backgroundAttrbuite: null,
-//     progress: null,
-//     children: [
-//       {
-//         id: "753103594958917",
-//         projectId: "737253120151621",
-//         planId: "753099772551237",
-//         name: "123",
-//         type: "group",
-//         level: 2,
-//         startTime: "2025-12-11T16:00:00.000Z",
-//         endTime: "2026-01-04T16:00:00.000Z",
-//         icon: "",
-//         parentId: "753099772575813",
-//         isSectionLine: false,
-//         importType: null,
-//         roadUrl: null,
-//         roadPlanID: null,
-//         jsonUrl: null,
-//         isDisplay: false,
-//         isLoad: false,
-//         sort: 1,
-//         modelPartsId: null,
-//         viewAttribute: null,
-//         backgroundAttrbuite: null,
-//         progress: null,
-//         children: [
-//           {
-//             id: "753103594979397",
-//             projectId: "737253120151621",
-//             planId: "753099772551237",
-//             name: "路基路面",
-//             type: "task",
-//             level: 3,
-//             startTime: "2025-12-11T16:00:00.000Z",
-//             endTime: "2026-01-04T16:00:00.000Z",
-//             icon: "SubgradeAndPavement",
-//             parentId: "753103594958917",
-//             isSectionLine: false,
-//             importType: null,
-//             roadUrl: null,
-//             roadPlanID: null,
-//             jsonUrl: null,
-//             isDisplay: true,
-//             isLoad: true,
-//             sort: 1,
-//             modelPartsId: null,
-//             viewAttribute: null,
-//             backgroundAttrbuite: null,
-//             progress: null,
-//             children: [],
-//             planType: "ConstructionPlan",
-//           },
-//           {
-//             id: "753103594979398",
-//             projectId: "737253120151621",
-//             planId: "753099772551237",
-//             name: "桥梁工程",
-//             type: "task",
-//             level: 3,
-//             startTime: "2025-12-11T16:00:00.000Z",
-//             endTime: "2026-01-04T16:00:00.000Z",
-//             icon: "BridgeEngineering",
-//             parentId: "753103594958917",
-//             isSectionLine: false,
-//             importType: null,
-//             roadUrl: null,
-//             roadPlanID: null,
-//             jsonUrl: null,
-//             isDisplay: true,
-//             isLoad: true,
-//             sort: 2,
-//             modelPartsId: null,
-//             viewAttribute: null,
-//             backgroundAttrbuite: null,
-//             progress: null,
-//             children: [],
-//             planType: "ConstructionPlan",
-//           },
-//           {
-//             id: "753103594979399",
-//             projectId: "737253120151621",
-//             planId: "753099772551237",
-//             name: "隧道工程",
-//             type: "task",
-//             level: 3,
-//             startTime: "2025-12-11T16:00:00.000Z",
-//             endTime: "2026-01-04T16:00:00.000Z",
-//             icon: "TunnelEngineering",
-//             parentId: "753103594958917",
-//             isSectionLine: false,
-//             importType: null,
-//             roadUrl: null,
-//             roadPlanID: null,
-//             jsonUrl: null,
-//             isDisplay: true,
-//             isLoad: true,
-//             sort: 3,
-//             modelPartsId: null,
-//             viewAttribute: null,
-//             backgroundAttrbuite: null,
-//             progress: null,
-//             children: [],
-//             planType: "ConstructionPlan",
-//           },
-//           {
-//             id: "753103594979400",
-//             projectId: "737253120151621",
-//             planId: "753099772551237",
-//             name: "交叉工程",
-//             type: "task",
-//             level: 3,
-//             startTime: "2025-12-11T16:00:00.000Z",
-//             endTime: "2026-01-04T16:00:00.000Z",
-//             icon: "CrossEngineering",
-//             parentId: "753103594958917",
-//             isSectionLine: false,
-//             importType: null,
-//             roadUrl: null,
-//             roadPlanID: null,
-//             jsonUrl: null,
-//             isDisplay: true,
-//             isLoad: true,
-//             sort: 4,
-//             modelPartsId: null,
-//             viewAttribute: null,
-//             backgroundAttrbuite: null,
-//             progress: null,
-//             children: [],
-//             planType: "ConstructionPlan",
-//           },
-//           {
-//             id: "753103594979401",
-//             projectId: "737253120151621",
-//             planId: "753099772551237",
-//             name: "交安工程",
-//             type: "task",
-//             level: 3,
-//             startTime: "2025-12-11T16:00:00.000Z",
-//             endTime: "2026-01-04T16:00:00.000Z",
-//             icon: "TrafficSafetyEngineering",
-//             parentId: "753103594958917",
-//             isSectionLine: false,
-//             importType: null,
-//             roadUrl: null,
-//             roadPlanID: null,
-//             jsonUrl: null,
-//             isDisplay: true,
-//             isLoad: true,
-//             sort: 5,
-//             modelPartsId: null,
-//             viewAttribute: null,
-//             backgroundAttrbuite: null,
-//             progress: null,
-//             children: [],
-//             planType: "ConstructionPlan",
-//           },
-//           {
-//             id: "753103594979402",
-//             projectId: "737253120151621",
-//             planId: "753099772551237",
-//             name: "服务设施",
-//             type: "task",
-//             level: 3,
-//             startTime: "2025-12-11T16:00:00.000Z",
-//             endTime: "2026-01-04T16:00:00.000Z",
-//             icon: "ServiceFacilities",
-//             parentId: "753103594958917",
-//             isSectionLine: false,
-//             importType: null,
-//             roadUrl: null,
-//             roadPlanID: null,
-//             jsonUrl: null,
-//             isDisplay: true,
-//             isLoad: true,
-//             sort: 6,
-//             modelPartsId: null,
-//             viewAttribute: null,
-//             backgroundAttrbuite: null,
-//             progress: null,
-//             children: [],
-//             planType: "ConstructionPlan",
-//           },
-//           {
-//             id: "753103594979403",
-//             projectId: "737253120151621",
-//             planId: "753099772551237",
-//             name: "施工产站",
-//             type: "task",
-//             level: 3,
-//             startTime: "2025-12-11T16:00:00.000Z",
-//             endTime: "2026-01-04T16:00:00.000Z",
-//             icon: "ConstructionStation",
-//             parentId: "753103594958917",
-//             isSectionLine: false,
-//             importType: null,
-//             roadUrl: null,
-//             roadPlanID: null,
-//             jsonUrl: null,
-//             isDisplay: true,
-//             isLoad: true,
-//             sort: 7,
-//             modelPartsId: null,
-//             viewAttribute: null,
-//             backgroundAttrbuite: null,
-//             progress: null,
-//             children: [],
-//             planType: "ConstructionPlan",
-//           },
-//         ],
-//         planType: "ConstructionPlan",
-//       },
-//     ],
-//     planType: "ConstructionPlan",
-//   },
-//   {
-//     id: "753099772575814",
-//     projectId: "737253120151621",
-//     planId: "753099772551237",
-//     name: "施工工序",
-//     type: "group",
-//     level: 1,
-//     startTime: "",
-//     endTime: "",
-//     icon: null,
-//     parentId: undefined,
-//     isSectionLine: false,
-//     importType: null,
-//     roadUrl: null,
-//     roadPlanID: null,
-//     jsonUrl: null,
-//     isDisplay: true,
-//     isLoad: true,
-//     sort: 1,
-//     modelPartsId: null,
-//     viewAttribute: null,
-//     backgroundAttrbuite: null,
-//     progress: null,
-//     children: [],
-//     planType: "ConstructionProgress",
-//   },
-//   {
-//     id: "753099772575815",
-//     projectId: "737253120151621",
-//     planId: "753099772551237",
-//     name: "背景与注释",
-//     type: "group",
-//     level: 1,
-//     startTime: "",
-//     endTime: "",
-//     icon: null,
-//     parentId: undefined,
-//     isSectionLine: false,
-//     importType: null,
-//     roadUrl: null,
-//     roadPlanID: null,
-//     jsonUrl: null,
-//     isDisplay: true,
-//     isLoad: true,
-//     sort: 2,
-//     modelPartsId: null,
-//     viewAttribute: null,
-//     backgroundAttrbuite: null,
-//     progress: null,
-//     children: [],
-//     planType: "BackgroundRemarks",
-//   },
-//   {
-//     id: "753099772575816",
-//     projectId: "737253120151621",
-//     planId: "753099772551237",
-//     name: "视点动画",
-//     type: "block",
-//     level: 1,
-//     startTime: "",
-//     endTime: "",
-//     icon: null,
-//     parentId: undefined,
-//     isSectionLine: false,
-//     importType: null,
-//     roadUrl: null,
-//     roadPlanID: null,
-//     jsonUrl: null,
-//     isDisplay: true,
-//     isLoad: true,
-//     sort: 3,
-//     modelPartsId: null,
-//     viewAttribute: null,
-//     backgroundAttrbuite: null,
-//     progress: null,
-//     children: [],
-//     planType: "ViewpointAnimation",
-//     allowInstant: true,
-//     blocks: [],
-//   },
-// ]);
 
 /**
  * 添加任务处理函数
@@ -660,15 +384,38 @@ const handleEdit = (item: GanttTask) => {
 const handleTaskEnter = (
   items: { task: GanttTask; block?: any; instant?: any }[]
 ) => {
-  console.group("时间轴进入触发");
+  console.log("******************************进入任务范围:", items);
+
+  // 防止页面加载初始化时自动触发：只有在时间轴播放状态下才执行飞行
+  if (window.map && !window.map.clock.shouldAnimate) {
+    return;
+  }
+
+  // 如果是瞬时点 同时 attr的type为"viewport-flight" 那么就获取alt heading lat lng pitch 执行一次视口飞行 飞行期间 时间停止 飞行完成后 时间继续
   items.forEach((item) => {
-    const { task, block, instant } = item;
-    let msg = `进入: [${task.name}]`;
-    if (block) msg += ` - 块: [${block.name}]`;
-    if (instant) msg += ` - 瞬时点: [${instant.name}]`;
-    console.log(msg, item);
+    const { instant } = item;
+    if (instant && instant.attr?.type === "viewport-flight") {
+      console.log("******************************进入任务范围?????");
+      const { alt, heading, lat, lng, pitch } = instant.attr;
+      if (window.map) {
+        // 停止时间
+        window.map.clock.shouldAnimate = false;
+
+        window.map
+          .setCameraView({
+            lat,
+            lng,
+            alt,
+            heading,
+            pitch,
+            duration: 3,
+          })
+          .then(() => {
+            window.map.clock.shouldAnimate = true;
+          });
+      }
+    }
   });
-  console.groupEnd();
 };
 
 /**
@@ -678,7 +425,6 @@ const handleTaskEnter = (
 const handleTaskLeave = (
   items: { task: GanttTask; block?: any; instant?: any }[]
 ) => {
-  console.group("时间轴离开触发");
   items.forEach((item) => {
     const { task, block } = item;
     let msg = `离开: [${task.name}]`;
@@ -712,19 +458,94 @@ const updateTaskNameRecursively = (
 };
 
 /**
- * 更新任务列表处理函数
- * @param tasks - 更新后的任务列表
- */
-const handleUpdateTasks = (tasks: (GanttTask | GanttGroup)[]) => {
-  console.log("******************************更新任务列表:", tasks);
-};
-
-/**
  * 更新任务处理函数
  * @param task - 更新后的任务对象
  */
 const handleUpdateTask = (task: GanttTask) => {
   console.log("******************************更新任务:", task);
+  // 当任务更新（如拖拽、缩放）时，重新计算漫游数据并更新播放器
+};
+
+/**
+ * 更新任务列表处理函数
+ * @param tasks - 更新后的任务列表
+ */
+const handleUpdateTasks = (tasks: (GanttTask | GanttGroup)[]) => {
+  console.log("******************************更新任务列表:", tasks);
+  // 当任务列表结构变化时，也重新更新播放器
+};
+
+/**
+ * 更新块处理函数
+ * @param block - 更新后的块对象
+ */
+const handleBlockUpdate = (payload: {
+  task: GanttTask;
+  block: any;
+  index: number;
+}) => {
+  console.log("******************************更新块:", payload);
+  updateRoamPlayer();
+};
+
+/**
+ * 重新计算漫游数据并更新播放器
+ */
+const updateRoamPlayer = () => {
+  if (!window.viewer) return;
+
+  // 1. 如果没有播放器，初始化一个
+  if (!roamPlayer.value) {
+    // @ts-ignore
+    roamPlayer.value = new ViewportRoam(window.map.viewer);
+  }
+
+  // 2. 重置 roamData 中的 time
+  resetRoamDataTimes(tasks.value);
+
+  console.log("******************************更新漫游数据:", tasks);
+  roamPlayer.value.updateData(tasks.value as any);
+
+  // 4. 如果之前是播放状态，确保继续播放
+  if (isRoaming.value) {
+    roamPlayer.value.start();
+  }
+};
+
+/**
+ * 重置漫游数据时间（辅助函数）
+ * 用于在任务时间改变后，清除漫游点已计算的绝对时间，以便重新插值
+ */
+const resetRoamDataTimes = (list: (GanttTask | GanttGroup)[]) => {
+  list.forEach((item) => {
+    if (item.type === "group" && item.children) {
+      resetRoamDataTimes(item.children);
+    } else {
+      const task = item as GanttTask;
+
+      // 注意：这里需要区分哪些是"用户写死的绝对时间"，哪些是"自动计算生成的绝对时间"。
+      // 这是一个难点。通常做法是：用户配置时不要写 time，只配位置。
+      // 或者在 roamData 里加个标记 _autoGenerated: true。
+      // 这里为了演示，假设如果 roamData 依赖任务时间，则每次都应该重算。
+      // 但现在我们无法区分。
+
+      // 简单的策略：如果任务被移动了，我们假设用户希望漫游点也跟随移动。
+      // 所以我们暴力清除所有 time，让 normalizeRoamData 重新计算。
+      // *风险*：如果用户真的想把漫游点定死在某个绝对时间（不随任务动），这样会被破坏。
+      // 但在甘特图漫游场景下，通常漫游是依附于任务的，随任务平移是合理预期。
+
+      if (task.attr?.roamData) {
+        task.attr.roamData.forEach((p: any) => delete p.time);
+      }
+      if (task.blocks) {
+        task.blocks.forEach((block) => {
+          if (block.attr?.roamData) {
+            block.attr.roamData.forEach((p: any) => delete p.time);
+          }
+        });
+      }
+    }
+  });
 };
 
 onMounted(() => {
@@ -750,6 +571,10 @@ onMounted(() => {
         animation: true,
         infoBox: false,
         selectionIndicator: false,
+      },
+      terrain: {
+        url: "http://data.mars3d.cn/terrain",
+        show: true,
       },
       basemaps: [
         {
@@ -793,7 +618,12 @@ onMounted(() => {
       };
     }
   }
-
+  // 初始化漫游播放器
+  updateRoamPlayer();
+  if (roamPlayer.value) {
+    // 默认开启漫游
+    roamPlayer.value.start();
+  }
   isViewerReady.value = true;
 });
 
@@ -806,7 +636,8 @@ onUnmounted(() => {
   }
 });
 
-//
+const isRoaming = ref(false);
+const roamPlayer = ref<ViewportRoam | null>(null);
 </script>
 
 <template>
@@ -829,6 +660,7 @@ onUnmounted(() => {
         @task-leave="handleTaskLeave"
         @update:tasks="handleUpdateTasks"
         @taskUpdate="handleUpdateTask"
+        @blockUpdate="handleBlockUpdate"
       >
         <!--  自定义工具栏插槽 -->
         <template #toolbar="{ togglePlay, isPlaying, handleResetView }">
@@ -1003,12 +835,7 @@ onUnmounted(() => {
   display: flex;
   justify-content: center;
   align-items: center;
-}
-</style>
-
-<style>
-body {
-  margin: 0;
+  width: auto;
 }
 .menu-item {
   padding: 8px 12px;
@@ -1018,5 +845,11 @@ body {
 }
 .menu-item:hover {
   background-color: #444;
+}
+</style>
+
+<style>
+body {
+  margin: 0;
 }
 </style>
