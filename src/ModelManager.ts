@@ -336,7 +336,7 @@ export class ModelManager {
   }
 
   /**
-   * 位移只能支持gitf
+   * 位移只能支持gitf 预留
    */
   private applyTransform(
     idStateMap: Map<

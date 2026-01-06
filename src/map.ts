@@ -93,8 +93,7 @@ export const removeDytModel = () => {
 
 import { ModelManager } from "./ModelManager";
 
-// 导出单例实例
-export const waterDamManager = new ModelManager();
+export const modelManager = new ModelManager();
 
 // 水坝模型图层
 let waterDamModelLayer: any = null;
@@ -114,7 +113,7 @@ export const loadWaterDamModel = () => {
   window.map.addLayer(waterDamModelLayer);
 
   // 初始化管理器
-  waterDamManager.setLayer(waterDamModelLayer);
+  modelManager.setLayer(waterDamModelLayer);
 };
 
 // 删除水坝模型
@@ -122,7 +121,7 @@ export const removeWaterDamModel = () => {
   if (waterDamModelLayer) {
     window.map.removeLayer(waterDamModelLayer, true);
     waterDamModelLayer = null;
-    waterDamManager.setLayer(null);
+    modelManager.setLayer(null);
   }
 };
 
@@ -144,10 +143,10 @@ export const waterDamSimulation = (task: any, step: number) => {
       ];
 
       // 注册施工任务到管理器
-      waterDamManager.addConstructionTask(foundationId, startTime1, endTime1);
+      modelManager.addConstructionTask(foundationId, startTime1, endTime1);
 
       // 如果需要立即刷新状态（防止时间轴没动时看不到效果）
-      // waterDamManager.updateTime(startTime); // 可选
+      // modelManager.updateTime(startTime); // 可选
       break;
     case 2:
       let { startTime: startTime2, endTime: endTime2 } = task;
@@ -160,7 +159,7 @@ export const waterDamSimulation = (task: any, step: number) => {
       // 第二步：种植绿植 从地底到地面 这些id就是绿植id
       // 假设从地下10米升到地面(0)
 
-      waterDamManager.addConstructionTask(foundationId, startTime2, endTime2);
+      modelManager.addConstructionTask(foundationId, startTime2, endTime2);
 
       break;
     case 3:
@@ -172,7 +171,7 @@ export const waterDamSimulation = (task: any, step: number) => {
         "fc490ca45c00b1249bbe3554a4fdf6fb",
         "ea5d2f1c4608232e07d3aa3d998e5135",
       ];
-      waterDamManager.addConstructionTask(foundationId, startTime3, endTime3);
+      modelManager.addConstructionTask(foundationId, startTime3, endTime3);
       break;
     case 4:
       let { startTime: startTime4, endTime: endTime4 } = task;
@@ -186,7 +185,7 @@ export const waterDamSimulation = (task: any, step: number) => {
         "093f65e080a295f8076b1c5722a46aa2",
         "e2c420d928d4bf8ce0ff2ec19b371514",
       ];
-      waterDamManager.addConstructionTask(foundationId, startTime4, endTime4);
+      modelManager.addConstructionTask(foundationId, startTime4, endTime4);
       break;
   }
 };
