@@ -335,23 +335,28 @@ export class ModelManager {
         this.layer.style = newStyle;
       });
     } else {
-      if (this.layer) this.layer.style = newStyle;
+      // 增加 try-catch 避免 Mars3D 内部在 tileset 未准备好时设置样式报错
+      try {
+        if (this.layer) this.layer.style = newStyle;
+      } catch (e) {
+        // console.warn("ModelManager: Failed to set style, layer might not be ready yet", e);
+      }
     }
   }
 
   /**
    * 位移只能支持gitf 预留
    */
-  private applyTransform(
-    idStateMap: Map<
-      string,
-      {
-        alpha: number;
-        color: string;
-        offset: { x: number; y: number; z: number };
-      }
-    >
-  ) {
-    // 预留
-  }
+  // private applyTransform(
+  //   idStateMap: Map<
+  //     string,
+  //     {
+  //       alpha: number;
+  //       color: string;
+  //       offset: { x: number; y: number; z: number };
+  //     }
+  //   >
+  // ) {
+  //   // 预留
+  // }
 }

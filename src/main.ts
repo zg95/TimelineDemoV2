@@ -7,5 +7,5 @@ import "mars3d-cesium/Build/Cesium/Widgets/widgets.css";
 import "mars3d//mars3d.css";
 
 const app = createApp(App);
-app.use(CesiumGantt); // 注册组件
+app.component("CesiumGantt", CesiumGantt); // 注册组件
 app.mount("#app");
