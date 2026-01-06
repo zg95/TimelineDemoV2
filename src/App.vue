@@ -16,7 +16,7 @@ import {
   hideDytModel,
   waterDamSimulation,
   initResources,
-  waterDamManager,
+  modelManager,
 } from "./map";
 
 // @ts-ignore
@@ -531,9 +531,9 @@ const handleUpdateTasks = (tasks: (GanttTask | GanttGroup)[]) => {
  * 遍历所有任务，将相关模型任务重新注册到管理器中
  */
 const updateModelManager = () => {
-  if (waterDamManager) {
+  if (modelManager) {
     // 1. 清除旧任务
-    waterDamManager.clearTasks();
+    modelManager.clearTasks();
 
     // 2. 递归查找并注册任务
     const traverse = (list: (GanttTask | GanttGroup)[]) => {
@@ -562,7 +562,7 @@ const updateModelManager = () => {
     // 3. 立即刷新当前时间状态
     if (window.map && window.map.clock) {
       const currentTime = JulianDate.toDate(window.map.clock.currentTime);
-      waterDamManager.updateTime(currentTime.getTime());
+      modelManager.updateTime(currentTime.getTime());
     }
   }
 };
@@ -677,7 +677,7 @@ onMounted(() => {
     window.map.on(mars3d.EventType.clockTick, () => {
       if (window.map && window.map.clock) {
         const currentTime = JulianDate.toDate(window.map.clock.currentTime);
-        waterDamManager.updateTime(currentTime.getTime());
+        modelManager.updateTime(currentTime.getTime());
       }
     });
 
