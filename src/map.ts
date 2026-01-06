@@ -18,7 +18,7 @@ export const loadCountryBorder = () => {
   countryBorderLayer = new mars3d.layer.GeoJsonLayer({
     name: "国界",
     //  url,
-    url: "/nationalBoundaries.json",
+    url: "nationalBoundaries.json",
     symbol: {
       type: "polylineC",
       styleOptions: {
