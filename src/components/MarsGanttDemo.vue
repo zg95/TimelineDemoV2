@@ -712,21 +712,17 @@ onMounted(() => {
     }
   }
   nextTick(() => {
-    // 使用 setTimeout 稍微延迟执行，避免初始化时的资源竞争和主线程阻塞，
-    // 同时防止因大对象 logging 或 heavy calculation 导致的调试连接断开
-    setTimeout(() => {
-      // 初始化漫游播放器
-      updateRoamPlayer();
-      if (roamPlayer.value) {
-        // 默认开启漫游
-        roamPlayer.value.start();
-        initResources();
-      }
-      // 初始化模型管理器，确保初始任务状态被加载
-      updateModelManager();
+    // 初始化漫游播放器
+    updateRoamPlayer();
+    if (roamPlayer.value) {
+      // 默认开启漫游
+      roamPlayer.value.start();
+      initResources();
+    }
+    // 初始化模型管理器，确保初始任务状态被加载
+    updateModelManager();
 
-      isViewerReady.value = true;
-    }, 200);
+    isViewerReady.value = true;
   });
 });
 
