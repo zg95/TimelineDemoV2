@@ -11,3 +11,5 @@ interface Window {
   viewer: any;
   Cesium: any;
 }
+
+declare const mars3d: any;

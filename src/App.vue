@@ -9,6 +9,16 @@ import {
   type GanttGroup,
 } from "chbim-time-axis-v2";
 
+import {
+  loadCountryBorder,
+  removeCountryBorder,
+  showDytModel,
+  hideDytModel,
+  waterDamSimulation,
+  initResources,
+  waterDamManager,
+} from "./map";
+
 // @ts-ignore
 window.Cesium = mars3d.Cesium;
 
@@ -32,8 +42,8 @@ const tasks = ref<(GanttTask | GanttGroup)[]>([
     allowInstant: true,
     blocks: [
       {
-        startTime: dayjs("2025-12-15 00:00:00").add(4, "day").toISOString(),
-        endTime: dayjs("2025-12-15 00:00:00").add(12, "day").toISOString(),
+        startTime: dayjs("2025-12-15 00:00:00").add(2, "day").toISOString(),
+        endTime: dayjs("2025-12-15 00:00:00").add(5, "day").toISOString(),
         name: "视口漫游1",
         color: "#ff5555",
         attr: {
@@ -78,52 +88,45 @@ const tasks = ref<(GanttTask | GanttGroup)[]>([
       {
         startTime: dayjs("2025-12-15 00:00:00").add(22, "day").toISOString(),
         endTime: dayjs("2025-12-15 00:00:00").add(27, "day").toISOString(),
-        name: "视口漫游2",
+        name: "无数据",
         color: "#5555ff",
       },
       {
-        startTime: dayjs("2025-12-15 00:00:00").add(14, "day").toISOString(),
-        endTime: dayjs("2025-12-15 00:00:00").add(21, "day").toISOString(),
-        name: "无数据",
+        startTime: dayjs("2025-12-15 00:00:00").add(7, "day").toISOString(),
+        endTime: dayjs("2025-12-15 00:00:00").add(12, "day").toISOString(),
+        name: "视点漫游第二段",
         color: "#e3ff55",
         attr: {
           // 视口漫游
           type: "viewport-roam",
           roamData: [
             {
-              alt: 976.3,
-              heading: 156.2,
-              lat: 22.56967,
-              lng: 114.142361,
-              pitch: -24.7,
+              lng: 108.961601,
+              lat: 34.217109,
+              alt: 509.2,
+              heading: 314.5,
+              pitch: -22.5,
             },
             {
-              alt: 388.4,
-              heading: 50,
-              lat: 22.546051,
-              lng: 114.143493,
-              pitch: -24.8,
+              lng: 108.96164,
+              lat: 34.222159,
+              alt: 510.3,
+              heading: 211.2,
+              pitch: -22.5,
             },
             {
-              alt: 638.7,
-              heading: 306.2,
-              lat: 22.540672,
-              lng: 114.165232,
-              pitch: -27.8,
+              lng: 108.957259,
+              lat: 34.221967,
+              alt: 494.3,
+              heading: 127.5,
+              pitch: -17.2,
             },
             {
-              alt: 616.4,
-              heading: 286.6,
-              lat: 22.551244,
-              lng: 114.169335,
-              pitch: -26.9,
-            },
-            {
-              alt: 468.3,
-              heading: 218.3,
-              lat: 22.571266,
-              lng: 114.168322,
-              pitch: -21.4,
+              lng: 108.957319,
+              lat: 34.217225,
+              alt: 515.5,
+              heading: 25.4,
+              pitch: -25.3,
             },
           ],
         },
@@ -145,88 +148,98 @@ const tasks = ref<(GanttTask | GanttGroup)[]>([
       },
       {
         id: "1-1-2",
+        time: dayjs("2025-12-16 00:00:00").add(13, "day").toISOString(),
+        attr: {
+          // 视口飞行
+          type: "viewport-flight",
+          alt: 126,
+          heading: 4.9,
+          lat: 29.789576,
+          lng: 121.479294,
+          pitch: -28.7,
+        },
+      },
+      {
+        id: "1-1-3",
         time: dayjs("2025-12-15 00:00:00").add(30, "day").toISOString(),
-        name: "自由的心",
+        name: "嘿嘿",
         attr: { verified: true },
         class: "verified-instant",
       },
     ],
   },
-  // {
-  //   id: "2",
-  //   name: "施工工序",
-  //   type: "group",
-  //   startTime: "",
-  //   endTime: "",
-  //   limitStartTime: dayjs("2025-12-15 00:00:00")
-  //     .subtract(1, "day")
-  //     .toISOString(),
-  //   limitEndTime: dayjs("2025-12-15 00:00:00").add(10, "day").toISOString(),
-  //   children: [
-  //     {
-  //       id: "1-subgroup",
-  //       name: "第一阶段",
-  //       type: "group",
-  //       startTime: "",
-  //       endTime: "",
-  //       limitStartTime: dayjs("2025-12-15 00:00:00")
-  //         .subtract(1, "day")
-  //         .toISOString(),
-  //       limitEndTime: dayjs("2025-12-15 00:00:00").add(10, "day").toISOString(),
-  //       children: [
-  //         {
-  //           id: "1-subgroup-task2",
-  //           name: "上构件施工",
-  //           startTime: dayjs("2025-12-15 00:00:00").add(2, "day").toISOString(),
-  //           endTime: dayjs("2025-12-15 00:00:00").add(5, "day").toISOString(),
-  //         },
-  //       ],
-  //     },
-  //     {
-  //       id: "1-2",
-  //       name: "第二阶段",
-  //       type: "group",
-  //       startTime: "",
-  //       endTime: "",
-  //       limitStartTime: dayjs("2025-12-15 00:00:00")
-  //         .subtract(2, "day")
-  //         .toISOString(),
-  //       limitEndTime: dayjs("2025-12-15 00:00:00").add(6, "day").toISOString(),
-  //       children: [
-  //         {
-  //           id: "1-subgroup-task3",
-  //           name: "XXXX施工",
-  //           startTime: dayjs("2025-12-15 00:00:00").add(2, "day").toISOString(),
-  //           endTime: dayjs("2025-12-15 00:00:00").add(4, "day").toISOString(),
-  //         },
-  //         {
-  //           id: "1-subgroup-task4",
-  //           name: "XXXX施工",
-  //           startTime: dayjs("2025-12-15 00:00:00").add(2, "day").toISOString(),
-  //           endTime: dayjs("2025-12-15 00:00:00").add(5, "day").toISOString(),
-  //         },
-  //       ],
-  //     },
-  //     {
-  //       id: "1-3",
-  //       name: "任务 3",
-  //       startTime: dayjs("2025-12-15 00:00:00").add(2, "day").toISOString(),
-  //       endTime: dayjs("2025-12-15 00:00:00").add(7, "day").toISOString(),
-  //     },
-  //   ],
-  // },
   {
     id: "2",
-    name: "背景注释",
+    name: "国界",
+    attr: {
+      type: "country-border",
+    },
+    startTime: dayjs("2025-12-15 00:00:00").toISOString(),
+    endTime: dayjs("2025-12-15 00:00:00").add(30, "day").toISOString(),
+  },
+  {
+    id: "3",
+    name: "素材1",
     type: "group",
     startTime: "",
     endTime: "",
     children: [
       {
         id: "3-1",
-        name: "倾斜摄影",
-        startTime: dayjs("2025-12-15 00:00:00").add(1, "day").toISOString(),
-        endTime: dayjs("2025-12-15 00:00:00").add(10, "day").toISOString(),
+        name: "大雁塔（倾斜模型）",
+        attr: {
+          type: "dyt-model",
+        },
+        startTime: dayjs("2025-12-15 00:00:00").add(6, "day").toISOString(),
+        endTime: dayjs("2025-12-15 00:00:00").add(13, "day").toISOString(),
+      },
+    ],
+  },
+  {
+    id: "4",
+    name: "水坝（模拟）",
+    type: "group",
+    startTime: "",
+    endTime: "",
+    children: [
+      {
+        id: "4-1",
+        name: "水坝底座",
+        attr: {
+          type: "water-dam-model",
+        },
+        startTime: dayjs("2025-12-15 00:00:00").add(15, "day").toISOString(),
+        endTime: dayjs("2025-12-15 00:00:00").add(19, "day").toISOString(),
+      },
+
+      {
+        id: "4-2",
+        name: "水坝绿植",
+        attr: {
+          type: "water-dam-plant",
+        },
+        startTime: dayjs("2025-12-15 00:00:00").add(16, "day").toISOString(),
+        endTime: dayjs("2025-12-15 00:00:00").add(19, "day").toISOString(),
+      },
+
+      {
+        id: "4-3",
+        name: "房",
+        attr: {
+          type: "water-dam-house",
+        },
+        startTime: dayjs("2025-12-15 00:00:00").add(19, "day").toISOString(),
+        endTime: dayjs("2025-12-15 00:00:00").add(22, "day").toISOString(),
+      },
+
+      {
+        id: "4-4",
+        name: "水坝",
+        attr: {
+          type: "water-dam-model2",
+        },
+        startTime: dayjs("2025-12-15 00:00:00").add(23, "day").toISOString(),
+        endTime: dayjs("2025-12-15 00:00:00").add(25, "day").toISOString(),
       },
     ],
   },
@@ -238,7 +251,6 @@ const tasks = ref<(GanttTask | GanttGroup)[]>([
  */
 const handleAdd = (parentId: string) => {
   console.log("点击了添加按钮，父级ID:", parentId);
-
   /**
    * 递归查找父级分组并添加新任务
    * @param list - 当前递归层级的任务列表
@@ -384,35 +396,59 @@ const handleEdit = (item: GanttTask) => {
 const handleTaskEnter = (
   items: { task: GanttTask; block?: any; instant?: any }[]
 ) => {
-  console.log("******************************进入任务范围:", items);
+  // console.log("******************************进入任务范围:", items);
 
   // 防止页面加载初始化时自动触发：只有在时间轴播放状态下才执行飞行
+  let duration = 1;
   if (window.map && !window.map.clock.shouldAnimate) {
-    return;
+    duration = 0.2;
+    // return;
   }
-
   // 如果是瞬时点 同时 attr的type为"viewport-flight" 那么就获取alt heading lat lng pitch 执行一次视口飞行 飞行期间 时间停止 飞行完成后 时间继续
   items.forEach((item) => {
-    const { instant } = item;
+    const { instant, task } = item;
+    // 视点飞行
     if (instant && instant.attr?.type === "viewport-flight") {
-      console.log("******************************进入任务范围?????");
       const { alt, heading, lat, lng, pitch } = instant.attr;
+      console.log("?????????????");
       if (window.map) {
         // 停止时间
-        window.map.clock.shouldAnimate = false;
-
+        if (duration > 0.5) {
+          window.map.clock.shouldAnimate = false;
+        }
         window.map
-          .setCameraView({
-            lat,
-            lng,
-            alt,
-            heading,
-            pitch,
-            duration: 3,
-          })
+          .setCameraView(
+            {
+              lat,
+              lng,
+              alt,
+              heading,
+              pitch,
+            },
+            {
+              duration,
+            }
+          )
           .then(() => {
-            window.map.clock.shouldAnimate = true;
+            if (duration > 0.5) {
+              window.map.clock.shouldAnimate = true;
+            }
           });
+      }
+    }
+    if (task) {
+      if (task.attr) {
+        let { type } = task.attr as any;
+        switch (type) {
+          case "country-border":
+            // 国家边界
+            loadCountryBorder();
+            break;
+          case "dyt-model":
+            // 大雁塔模型
+            showDytModel();
+            break;
+        }
       }
     }
   });
@@ -427,11 +463,22 @@ const handleTaskLeave = (
 ) => {
   items.forEach((item) => {
     const { task, block } = item;
-    let msg = `离开: [${task.name}]`;
-    if (block) msg += ` - 块: [${block.name}]`;
-    console.log(msg, item);
+    if (task) {
+      if (task.attr) {
+        let { type } = task.attr as any;
+        switch (type) {
+          case "country-border":
+            // 国家边界
+            removeCountryBorder();
+            break;
+          case "dyt-model":
+            // 大雁塔模型
+            hideDytModel();
+            break;
+        }
+      }
+    }
   });
-  console.groupEnd();
 };
 
 /**
@@ -464,6 +511,8 @@ const updateTaskNameRecursively = (
 const handleUpdateTask = (task: GanttTask) => {
   console.log("******************************更新任务:", task);
   // 当任务更新（如拖拽、缩放）时，重新计算漫游数据并更新播放器
+  updateRoamPlayer();
+  updateModelManager();
 };
 
 /**
@@ -473,6 +522,49 @@ const handleUpdateTask = (task: GanttTask) => {
 const handleUpdateTasks = (tasks: (GanttTask | GanttGroup)[]) => {
   console.log("******************************更新任务列表:", tasks);
   // 当任务列表结构变化时，也重新更新播放器
+  updateRoamPlayer();
+  updateModelManager();
+};
+
+/**
+ * 更新模型管理器状态
+ * 遍历所有任务，将相关模型任务重新注册到管理器中
+ */
+const updateModelManager = () => {
+  if (waterDamManager) {
+    // 1. 清除旧任务
+    waterDamManager.clearTasks();
+
+    // 2. 递归查找并注册任务
+    const traverse = (list: (GanttTask | GanttGroup)[]) => {
+      list.forEach((item) => {
+        if (item.type === "group" && item.children) {
+          traverse(item.children);
+        } else {
+          const task = item as GanttTask;
+          if (task.attr && task.attr.type === "water-dam-model") {
+            waterDamSimulation(task, 1);
+          }
+          if (task.attr && task.attr.type === "water-dam-plant") {
+            waterDamSimulation(task, 2);
+          }
+          if (task.attr && task.attr.type === "water-dam-house") {
+            waterDamSimulation(task, 3);
+          }
+          if (task.attr && task.attr.type === "water-dam-model2") {
+            waterDamSimulation(task, 4);
+          }
+        }
+      });
+    };
+    traverse(tasks.value);
+
+    // 3. 立即刷新当前时间状态
+    if (window.map && window.map.clock) {
+      const currentTime = JulianDate.toDate(window.map.clock.currentTime);
+      waterDamManager.updateTime(currentTime.getTime());
+    }
+  }
 };
 
 /**
@@ -486,6 +578,7 @@ const handleBlockUpdate = (payload: {
 }) => {
   console.log("******************************更新块:", payload);
   updateRoamPlayer();
+  updateModelManager();
 };
 
 /**
@@ -523,17 +616,6 @@ const resetRoamDataTimes = (list: (GanttTask | GanttGroup)[]) => {
     } else {
       const task = item as GanttTask;
 
-      // 注意：这里需要区分哪些是"用户写死的绝对时间"，哪些是"自动计算生成的绝对时间"。
-      // 这是一个难点。通常做法是：用户配置时不要写 time，只配位置。
-      // 或者在 roamData 里加个标记 _autoGenerated: true。
-      // 这里为了演示，假设如果 roamData 依赖任务时间，则每次都应该重算。
-      // 但现在我们无法区分。
-
-      // 简单的策略：如果任务被移动了，我们假设用户希望漫游点也跟随移动。
-      // 所以我们暴力清除所有 time，让 normalizeRoamData 重新计算。
-      // *风险*：如果用户真的想把漫游点定死在某个绝对时间（不随任务动），这样会被破坏。
-      // 但在甘特图漫游场景下，通常漫游是依附于任务的，随任务平移是合理预期。
-
       if (task.attr?.roamData) {
         task.attr.roamData.forEach((p: any) => delete p.time);
       }
@@ -561,10 +643,14 @@ onMounted(() => {
           pitch: -90,
         },
         clock: {
-          currentTime: "2025-12-15 00:00:00",
+          currentTime: "2025-12-14 20:00:00",
           shouldAnimate: false,
         },
+        globe: {
+          depthTestAgainstTerrain: true,
+        },
       },
+
       control: {
         baseLayerPicker: false,
         timeline: true,
@@ -586,11 +672,21 @@ onMounted(() => {
         },
       ],
     });
+    window.mars3d = mars3d;
+    // 监听时间轴更新，驱动水坝模型动画
+    window.map.on(mars3d.EventType.clockTick, () => {
+      if (window.map && window.map.clock) {
+        const currentTime = JulianDate.toDate(window.map.clock.currentTime);
+        waterDamManager.updateTime(currentTime.getTime());
+      }
+    });
 
     // 获取内部 Cesium Viewer 实例供甘特图组件使用
     // @ts-ignore
     window.viewer = window.map.viewer;
-
+    window.map.fixedLight = true;
+    // 更新时间播放倍率
+    window.map.clock.multiplier = 30000;
     // 配置 Cesium 动画/时间轴以显示本地时间 (例如中国时间)
     // @ts-ignore
     if (window.viewer.animation) {
@@ -623,7 +719,11 @@ onMounted(() => {
   if (roamPlayer.value) {
     // 默认开启漫游
     roamPlayer.value.start();
+    initResources();
+    // roamPlayer.value.handleResetView();
   }
+  // 初始化模型管理器，确保初始任务状态被加载
+  updateModelManager();
   isViewerReady.value = true;
 });
 
