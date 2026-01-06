@@ -323,7 +323,11 @@ export class ModelManager {
         conditions: styleConditions,
       },
     });
-
+    // console.log(
+    //   "******************************newStyle:",
+    //   this.layer,
+    //   newStyle
+    // );
     if (this.layer.ready) {
       this.layer.style = newStyle;
     } else if (this.layer.readyPromise) {
@@ -331,7 +335,7 @@ export class ModelManager {
         this.layer.style = newStyle;
       });
     } else {
-      this.layer.style = newStyle;
+      if (this.layer) this.layer.style = newStyle;
     }
   }
 
