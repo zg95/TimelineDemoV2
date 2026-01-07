@@ -1,16 +1,12 @@
 import dayjs from "dayjs";
 
-type TaskType = "construct" | "demolish" | "translate";
+type TaskType = "construct" | "demolish";
 
 export interface ModelTask {
   ids: string[];
   startTime: number;
   endTime: number;
   type: TaskType;
-  params?: {
-    startPos?: { x: number; y: number; z: number };
-    endPos?: { x: number; y: number; z: number };
-  };
 }
 
 export class ModelManager {
@@ -60,37 +56,17 @@ export class ModelManager {
     this.addTask(ids, startTime, endTime, "demolish");
   }
 
-  /**
-   * 添加位移任务
-   * @param ids 构件ID
-   * @param startTime 开始时间
-   * @param endTime 结束时间
-   * @param startPos 开始位置偏移 {x, y, z}
-   * @param endPos 结束位置偏移 {x, y, z}
-   */
-  addTranslationTask(
-    ids: string[],
-    startTime: string | number,
-    endTime: string | number,
-    startPos: { x: number; y: number; z: number } = { x: 0, y: 0, z: 0 },
-    endPos: { x: number; y: number; z: number } = { x: 0, y: 0, z: 0 }
-  ) {
-    this.addTask(ids, startTime, endTime, "translate", { startPos, endPos });
-  }
-
   private addTask(
     ids: string[],
     startTime: string | number,
     endTime: string | number,
-    type: TaskType,
-    params?: ModelTask["params"]
+    type: TaskType
   ) {
     this.tasks.push({
       ids,
       startTime: dayjs(startTime).valueOf(),
       endTime: dayjs(endTime).valueOf(),
       type,
-      params,
     });
   }
 
@@ -124,13 +100,12 @@ export class ModelManager {
       });
     });
 
-    // 存储每个ID对应的透明度和颜色、位移
+    // 存储每个ID对应的透明度和颜色
     const idStateMap = new Map<
       string,
       {
         alpha: number;
         color: string;
-        offset: { x: number; y: number; z: number };
       }
     >();
 
@@ -140,7 +115,6 @@ export class ModelManager {
     allIds.forEach((id) => {
       let alpha = 0;
       let color = "'rgb(250, 250, 250)'";
-      let offset = { x: 0, y: 0, z: 0 };
 
       // 如果是常显构件，默认可见
       if (this.staticIds.includes(id)) {
@@ -170,7 +144,6 @@ export class ModelManager {
 
         // 确定基础状态
         if (lastFinishedTask) {
-          // translate 任务完成后通常是保持可见
           alpha = lastFinishedTask.type === "demolish" ? 0 : 1;
         } else {
           // 如果没有已完成的任务，检查是否为常显构件
@@ -181,79 +154,44 @@ export class ModelManager {
 
         // 如果有活跃任务，由活跃任务决定状态
         if (activeTasks.length > 0) {
-          // 1. 找到开始时间最晚的任务，以确定主导类型 (Construct/Demolish/Translate)
+          // 1. 找到开始时间最晚的任务，以确定主导类型 (Construct/Demolish)
           const latestTask = activeTasks[activeTasks.length - 1];
           const dominantType = latestTask.type;
 
-          if (dominantType === "translate") {
-            // 如果是位移任务，保持可见
-            alpha = 1;
+          const sameTypeTasks = activeTasks.filter(
+            (t) => t.type === dominantType
+          );
 
-            const sameTypeTasks = activeTasks.filter(
-              (t) => t.type === dominantType
-            );
-            // 找到当前正在进行的位移任务（取最后一个）
-            const task = sameTypeTasks[sameTypeTasks.length - 1];
-            if (task) {
-              const dur = Math.max(task.endTime - task.startTime, 1);
-              const p = Math.max(
-                0,
-                Math.min(1, (current - task.startTime) / dur)
-              );
-
-              if (task.params && task.params.startPos && task.params.endPos) {
-                const s = task.params.startPos;
-                const e = task.params.endPos;
-                offset = {
-                  x: s.x + (e.x - s.x) * p,
-                  y: s.y + (e.y - s.y) * p,
-                  z: s.z + (e.z - s.z) * p,
-                };
+          if (dominantType === "construct") {
+            let maxAlpha = -1;
+            for (const t of sameTypeTasks) {
+              const dur = Math.max(t.endTime - t.startTime, 1);
+              const p = Math.max(0, Math.min(1, (current - t.startTime) / dur));
+              if (p > maxAlpha) {
+                maxAlpha = p;
               }
             }
+            alpha = maxAlpha;
+
+            if (alpha > 0.8 && isFlashPhase) {
+              color = "'rgb(135, 206, 250)'";
+            }
           } else {
-            // Construct / Demolish 逻辑保持不变
-            const sameTypeTasks = activeTasks.filter(
-              (t) => t.type === dominantType
-            );
+            // Demolish
+            let minAlpha = 2;
+            for (const t of sameTypeTasks) {
+              const dur = Math.max(t.endTime - t.startTime, 1);
+              const p = Math.max(0, Math.min(1, (current - t.startTime) / dur));
+              const a = 1 - p;
+              if (a < minAlpha) {
+                minAlpha = a;
+              }
+            }
+            alpha = minAlpha;
 
-            if (dominantType === "construct") {
-              let maxAlpha = -1;
-              for (const t of sameTypeTasks) {
-                const dur = Math.max(t.endTime - t.startTime, 1);
-                const p = Math.max(
-                  0,
-                  Math.min(1, (current - t.startTime) / dur)
-                );
-                if (p > maxAlpha) {
-                  maxAlpha = p;
-                }
-              }
-              alpha = maxAlpha;
-
-              if (alpha > 0.8 && isFlashPhase) {
-                color = "'rgb(135, 206, 250)'";
-              }
-            } else {
-              // Demolish
-              let minAlpha = 2;
-              for (const t of sameTypeTasks) {
-                const dur = Math.max(t.endTime - t.startTime, 1);
-                const p = Math.max(
-                  0,
-                  Math.min(1, (current - t.startTime) / dur)
-                );
-                const a = 1 - p;
-                if (a < minAlpha) {
-                  minAlpha = a;
-                }
-              }
-              alpha = minAlpha;
-
-              const p = 1 - alpha;
-              if (p > 0.8 && isFlashPhase) {
-                color = "'rgb(240, 128, 128)'";
-              }
+            const p = 1 - alpha;
+            if (p > 0.8 && isFlashPhase) {
+              color = "'rgb(240, 128, 128)'";
             }
           }
         } else if (lastFinishedTask) {
@@ -263,10 +201,6 @@ export class ModelManager {
           const firstTask = tasks[0];
           if (firstTask.type === "construct") {
             alpha = 0;
-          } else if (firstTask.type === "translate") {
-            if (!this.staticIds.includes(id)) {
-              alpha = 0;
-            }
           } else {
             if (!this.staticIds.includes(id)) {
               alpha = 1;
@@ -275,7 +209,7 @@ export class ModelManager {
         }
       }
 
-      idStateMap.set(id, { alpha, color, offset });
+      idStateMap.set(id, { alpha, color });
     });
 
     // 更新样式
@@ -291,7 +225,6 @@ export class ModelManager {
       {
         alpha: number;
         color: string;
-        offset: { x: number; y: number; z: number };
       }
     >
   ) {
@@ -338,25 +271,7 @@ export class ModelManager {
       // 增加 try-catch 避免 Mars3D 内部在 tileset 未准备好时设置样式报错
       try {
         if (this.layer) this.layer.style = newStyle;
-      } catch (e) {
-        // console.warn("ModelManager: Failed to set style, layer might not be ready yet", e);
-      }
+      } catch (e) {}
     }
   }
-
-  /**
-   * 位移只能支持gitf 预留
-   */
-  // private applyTransform(
-  //   idStateMap: Map<
-  //     string,
-  //     {
-  //       alpha: number;
-  //       color: string;
-  //       offset: { x: number; y: number; z: number };
-  //     }
-  //   >
-  // ) {
-  //   // 预留
-  // }
 }
