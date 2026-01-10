@@ -132,7 +132,7 @@ export const removeWaterDamModel = () => {
  * 第二步：种植绿植 从地底到地面
  */
 export const waterDamSimulation = (task: any, step: number) => {
-  console.log("******************************水坝模拟:", step);
+  // console.log("******************************水坝模拟:", step);
   let foundationId = [];
   switch (step) {
     case 1:

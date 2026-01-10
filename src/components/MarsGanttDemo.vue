@@ -398,7 +398,7 @@ const handleEdit = (item: GanttTask) => {
 const handleTaskEnter = (
   items: { task: GanttTask; block?: any; instant?: any }[]
 ) => {
-  // console.log("******************************进入任务范围:", items);
+  console.log("******************************进入任务范围:", items);
 
   // 防止页面加载初始化时自动触发：只有在时间轴播放状态下才执行飞行
   let duration = 1;
