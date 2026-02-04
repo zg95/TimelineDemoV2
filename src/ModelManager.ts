@@ -188,7 +188,6 @@ export class ModelManager {
               }
             }
             alpha = minAlpha;
-
             const p = 1 - alpha;
             if (p > 0.8 && isFlashPhase) {
               color = "'rgb(240, 128, 128)'";
@@ -271,7 +270,7 @@ export class ModelManager {
       // 增加 try-catch 避免 Mars3D 内部在 tileset 未准备好时设置样式报错
       try {
         if (this.layer) this.layer.style = newStyle;
-      } catch (e) {}
+      } catch (e) { }
     }
   }
 }
